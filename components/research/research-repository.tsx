@@ -43,77 +43,22 @@ export function ResearchRepository() {
   const { toast } = useToast()
 
   useEffect(() => {
-    // Simulate fetching research papers
     const fetchPapers = async () => {
       setLoading(true)
-      const mockPapers: ResearchPaper[] = [
-        {
-          id: "1",
-          title: "Climate Change Impacts on Agricultural Productivity in Sub-Saharan Africa",
-          abstract:
-            "This study examines the effects of climate change on agricultural productivity across Sub-Saharan Africa, analyzing temperature and precipitation patterns over the past 30 years.",
-          authors: ["Dr. Amina Hassan", "Prof. John Okafor", "Dr. Sarah Mwangi"],
-          institution: "University of Nairobi",
-          tags: ["Agriculture", "Climate Change", "Food Security", "Sub-Saharan Africa"],
-          region: ["West Africa", "East Africa"],
-          uploadDate: "2024-01-15",
-          downloads: 234,
-          fileSize: "2.4 MB",
-          fileType: "PDF",
-          isPublic: true,
-        },
-        {
-          id: "2",
-          title: "Drought Prediction Models for the Sahel Region Using Satellite Data",
-          abstract:
-            "Development of machine learning models for drought prediction in the Sahel region using satellite imagery and meteorological data.",
-          authors: ["Dr. Sarah Johnson", "Dr. Mohamed Ali", "Prof. David Chen"],
-          institution: "ICRISAT",
-          tags: ["Drought", "Satellite Data", "Machine Learning", "Prediction Models"],
-          region: ["West Africa", "Sahel"],
-          uploadDate: "2024-01-12",
-          downloads: 189,
-          fileSize: "3.1 MB",
-          fileType: "PDF",
-          isPublic: true,
-        },
-        {
-          id: "3",
-          title: "Solar Radiation Patterns and Renewable Energy Potential in East Africa",
-          abstract:
-            "Analysis of solar radiation patterns across East Africa and assessment of renewable energy potential for sustainable development.",
-          authors: ["Prof. David Kimani", "Dr. Grace Wanjiku"],
-          institution: "Makerere University",
-          tags: ["Solar Energy", "Renewable Energy", "East Africa", "Sustainability"],
-          region: ["East Africa"],
-          uploadDate: "2024-01-10",
-          downloads: 156,
-          fileSize: "1.8 MB",
-          fileType: "PDF",
-          isPublic: true,
-        },
-        {
-          id: "4",
-          title: "Water Resource Management in the Nile Basin: Climate Adaptation Strategies",
-          abstract:
-            "Comprehensive study on water resource management strategies in the Nile Basin considering climate change impacts.",
-          authors: ["Dr. Ahmed Hassan", "Prof. Mary Ochieng"],
-          institution: "Cairo University",
-          tags: ["Water Resources", "Nile Basin", "Climate Adaptation", "Management"],
-          region: ["East Africa", "North Africa"],
-          uploadDate: "2024-01-08",
-          downloads: 203,
-          fileSize: "4.2 MB",
-          fileType: "PDF",
-          isPublic: false,
-        },
-      ]
-
-      setTimeout(() => {
-        setPapers(mockPapers)
-        setFilteredPapers(mockPapers.filter((paper) => paper.isPublic || user))
+      try {
+        const response = await fetch("/api/research")
+        const data = await response.json()
+        setPapers(data)
+        setFilteredPapers(data.filter((paper: ResearchPaper) => paper.isPublic || user))
+      } catch (error) {
+        toast({
+          title: "Error fetching research papers",
+          description: "Could not load the research papers.",
+          variant: "destructive",
+        })
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchPapers()

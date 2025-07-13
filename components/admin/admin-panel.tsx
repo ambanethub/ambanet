@@ -66,85 +66,30 @@ export function AdminPanel() {
   useEffect(() => {
     if (user?.role !== "admin") return
 
-    // Simulate fetching admin data
     const fetchAdminData = async () => {
       setLoading(true)
+      try {
+        const [usersRes, researchRes, statsRes] = await Promise.all([
+          fetch("/api/admin/users"),
+          fetch("/api/admin/research"),
+          fetch("/api/admin/stats"),
+        ])
+        const usersData = await usersRes.json()
+        const researchData = await researchRes.json()
+        const statsData = await statsRes.json()
 
-      const mockUsers: AdminUser[] = [
-        {
-          id: "1",
-          name: "Dr. Sarah Johnson",
-          email: "sarah.johnson@university.edu",
-          role: "researcher",
-          institution: "University of Cape Town",
-          country: "South Africa",
-          joinDate: "2023-06-15",
-          status: "active",
-          researchCount: 5,
-          projectCount: 2,
-        },
-        {
-          id: "2",
-          name: "Prof. John Okafor",
-          email: "john.okafor@research.org",
-          role: "researcher",
-          institution: "University of Nairobi",
-          country: "Kenya",
-          joinDate: "2023-08-22",
-          status: "active",
-          researchCount: 8,
-          projectCount: 3,
-        },
-        {
-          id: "3",
-          name: "Dr. Amina Hassan",
-          email: "amina.hassan@climate.org",
-          role: "researcher",
-          institution: "ICRISAT",
-          country: "Niger",
-          joinDate: "2023-09-10",
-          status: "active",
-          researchCount: 3,
-          projectCount: 1,
-        },
-      ]
-
-      const mockResearch: AdminResearch[] = [
-        {
-          id: "1",
-          title: "Climate Change Impacts on Agricultural Productivity",
-          author: "Dr. Sarah Johnson",
-          uploadDate: "2024-01-15",
-          status: "approved",
-          downloads: 234,
-          isPublic: true,
-        },
-        {
-          id: "2",
-          title: "Drought Prediction Models for Sahel Region",
-          author: "Prof. John Okafor",
-          uploadDate: "2024-01-12",
-          status: "pending",
-          downloads: 0,
-          isPublic: false,
-        },
-      ]
-
-      const mockStats: SystemStats = {
-        totalUsers: 892,
-        activeUsers: 847,
-        totalResearch: 3456,
-        pendingResearch: 23,
-        totalProjects: 156,
-        activeProjects: 89,
-      }
-
-      setTimeout(() => {
-        setUsers(mockUsers)
-        setResearch(mockResearch)
-        setStats(mockStats)
+        setUsers(usersData)
+        setResearch(researchData)
+        setStats(statsData)
+      } catch (error) {
+        toast({
+          title: "Error fetching admin data",
+          description: "Could not load data for the admin panel.",
+          variant: "destructive",
+        })
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchAdminData()

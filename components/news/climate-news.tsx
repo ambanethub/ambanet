@@ -33,97 +33,18 @@ export function ClimateNews() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate fetching news articles
     const fetchNews = async () => {
       setLoading(true)
-      const mockArticles: NewsArticle[] = [
-        {
-          id: "1",
-          title: "Severe Drought Conditions Persist Across East Africa",
-          summary:
-            "The ongoing drought in East Africa continues to affect millions, with Kenya, Somalia, and Ethiopia experiencing the worst conditions in decades.",
-          content: "Full article content would be here...",
-          source: "Climate Central Africa",
-          author: "Dr. Sarah Mwangi",
-          publishDate: "2024-01-16",
-          category: "Extreme Weather",
-          region: ["East Africa", "Kenya", "Somalia", "Ethiopia"],
-          tags: ["Drought", "Food Security", "Agriculture"],
-          imageUrl: "/placeholder.svg?height=200&width=400",
-          url: "https://example.com/drought-east-africa",
-          isBookmarked: false,
-        },
-        {
-          id: "2",
-          title: "New Solar Energy Initiative Launched in West Africa",
-          summary:
-            "A major solar energy project aims to provide clean electricity to rural communities across Ghana, Nigeria, and Senegal.",
-          content: "Full article content would be here...",
-          source: "African Energy News",
-          author: "John Okafor",
-          publishDate: "2024-01-15",
-          category: "Renewable Energy",
-          region: ["West Africa", "Ghana", "Nigeria", "Senegal"],
-          tags: ["Solar Energy", "Rural Development", "Clean Energy"],
-          imageUrl: "/placeholder.svg?height=200&width=400",
-          url: "https://example.com/solar-west-africa",
-          isBookmarked: true,
-        },
-        {
-          id: "3",
-          title: "Climate Adaptation Strategies Show Promise in Morocco",
-          summary:
-            "Morocco's innovative water management and agricultural adaptation techniques are being studied as models for other African nations.",
-          content: "Full article content would be here...",
-          source: "African Climate Report",
-          author: "Dr. Fatima Al-Rashid",
-          publishDate: "2024-01-14",
-          category: "Adaptation",
-          region: ["North Africa", "Morocco"],
-          tags: ["Water Management", "Agriculture", "Adaptation"],
-          imageUrl: "/placeholder.svg?height=200&width=400",
-          url: "https://example.com/morocco-adaptation",
-          isBookmarked: false,
-        },
-        {
-          id: "4",
-          title: "Rising Sea Levels Threaten Coastal Communities in West Africa",
-          summary:
-            "New research shows accelerating sea level rise along the West African coast, particularly affecting Senegal and Ghana.",
-          content: "Full article content would be here...",
-          source: "Ocean Climate Institute",
-          author: "Prof. Kwame Asante",
-          publishDate: "2024-01-13",
-          category: "Sea Level Rise",
-          region: ["West Africa", "Senegal", "Ghana"],
-          tags: ["Sea Level Rise", "Coastal Communities", "Climate Change"],
-          imageUrl: "/placeholder.svg?height=200&width=400",
-          url: "https://example.com/sea-level-west-africa",
-          isBookmarked: false,
-        },
-        {
-          id: "5",
-          title: "Successful Reforestation Project in Central Africa Shows Results",
-          summary:
-            "A five-year reforestation initiative in the Democratic Republic of Congo has successfully restored 50,000 hectares of forest.",
-          content: "Full article content would be here...",
-          source: "Forest Watch Africa",
-          author: "Dr. Marie Kabila",
-          publishDate: "2024-01-12",
-          category: "Conservation",
-          region: ["Central Africa", "Democratic Republic of Congo"],
-          tags: ["Reforestation", "Conservation", "Carbon Sequestration"],
-          imageUrl: "/placeholder.svg?height=200&width=400",
-          url: "https://example.com/reforestation-drc",
-          isBookmarked: false,
-        },
-      ]
-
-      setTimeout(() => {
-        setArticles(mockArticles)
-        setFilteredArticles(mockArticles)
+      try {
+        const response = await fetch("/api/news")
+        const data = await response.json()
+        setArticles(data)
+        setFilteredArticles(data)
+      } catch (error) {
+        // No toast for news
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchNews()
