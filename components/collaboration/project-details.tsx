@@ -39,40 +39,25 @@ export function ProjectDetails({ id }: ProjectDetailsProps) {
   const { toast } = useToast()
 
   useEffect(() => {
-    // Simulate fetching project details
     const fetchProject = async () => {
       setLoading(true)
-
-      const mockProject: Project = {
-        id,
-        title: "Drought Early Warning System for Sahel Region",
-        description: `This comprehensive project aims to develop an integrated early warning system for drought prediction in the Sahel region using advanced satellite data analysis and machine learning techniques. The system will provide timely alerts to farmers, policymakers, and humanitarian organizations to enable proactive responses to drought conditions.
-
-The project combines multiple data sources including NASA POWER API, MODIS satellite imagery, and ground-based meteorological stations to create accurate drought forecasts. We will develop user-friendly dashboards and mobile applications to disseminate information effectively to end users.`,
-        objectives: [
-          "Collect and analyze historical drought data from multiple sources",
-          "Develop machine learning models for drought prediction with 85% accuracy",
-          "Create user-friendly dashboard and mobile app for stakeholders",
-          "Train local communities and organizations on system usage",
-          "Establish partnerships with regional meteorological services",
-          "Publish research findings in peer-reviewed journals",
-        ],
-        status: "active",
-        leader: "Dr. Amina Hassan",
-        participants: ["Dr. John Okafor", "Prof. Sarah Mwangi", "Dr. Mohamed Ali", "Dr. Grace Wanjiku"],
-        region: ["West Africa", "Sahel", "Niger", "Mali", "Burkina Faso"],
-        tags: ["Drought", "Early Warning", "Machine Learning", "Satellite Data", "Climate Adaptation"],
-        startDate: "2024-01-01",
-        endDate: "2024-12-31",
-        progress: 45,
-        category: "Climate Adaptation",
-        isPublic: true,
-      }
-
-      setTimeout(() => {
-        setProject(mockProject)
+      try {
+        const response = await fetch(`/api/collab/projects/${id}`)
+        if (!response.ok) {
+          throw new Error("Project not found")
+        }
+        const data = await response.json()
+        setProject(data)
+      } catch (error) {
+        setProject(null)
+        toast({
+          title: "Error fetching project details",
+          description: "Could not load the project details.",
+          variant: "destructive",
+        })
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchProject()

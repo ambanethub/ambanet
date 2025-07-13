@@ -37,46 +37,25 @@ export function ResearchDetails({ id }: ResearchDetailsProps) {
   const { toast } = useToast()
 
   useEffect(() => {
-    // Simulate fetching research paper details
     const fetchPaper = async () => {
       setLoading(true)
-
-      // Mock data - in real app, this would fetch from API
-      const mockPaper: ResearchPaper = {
-        id,
-        title: "Climate Change Impacts on Agricultural Productivity in Sub-Saharan Africa: A Comprehensive Analysis",
-        abstract: `This comprehensive study examines the multifaceted impacts of climate change on agricultural productivity across Sub-Saharan Africa over the past three decades. Using satellite data, meteorological records, and field surveys from 15 countries, we analyze temperature and precipitation patterns and their correlation with crop yields for major staple crops including maize, sorghum, millet, and cassava.
-
-Our findings reveal significant regional variations in climate impacts, with the Sahel region experiencing the most severe effects due to increased drought frequency and intensity. The study employs advanced statistical modeling and machine learning techniques to project future scenarios under different climate change pathways.
-
-Key findings include: (1) A 15-20% decline in average crop yields across the region since 1990, (2) Increased variability in precipitation patterns affecting planting and harvesting cycles, (3) Rising temperatures leading to heat stress in crops, particularly during critical growth periods, and (4) Shifting agro-ecological zones requiring adaptation of farming practices.
-
-The research provides evidence-based recommendations for climate adaptation strategies, including drought-resistant crop varieties, improved water management systems, and policy interventions to support smallholder farmers. These findings contribute to the growing body of knowledge on climate-agriculture interactions in Africa and inform policy decisions for sustainable food security.`,
-        authors: ["Dr. Amina Hassan", "Prof. John Okafor", "Dr. Sarah Mwangi", "Dr. Peter Kimani"],
-        institution: "University of Nairobi, Climate Research Institute",
-        tags: ["Agriculture", "Climate Change", "Food Security", "Sub-Saharan Africa", "Crop Yields"],
-        region: ["Sub-Saharan Africa", "West Africa", "East Africa", "Sahel"],
-        uploadDate: "2024-01-15",
-        downloads: 234,
-        fileSize: "2.4 MB",
-        fileType: "PDF",
-        isPublic: true,
-        category: "Climate Change",
-        keywords: [
-          "climate change",
-          "agriculture",
-          "food security",
-          "drought",
-          "crop yields",
-          "adaptation",
-          "Sub-Saharan Africa",
-        ],
-      }
-
-      setTimeout(() => {
-        setPaper(mockPaper)
+      try {
+        const response = await fetch(`/api/research/${id}`)
+        if (!response.ok) {
+          throw new Error("Paper not found")
+        }
+        const data = await response.json()
+        setPaper(data)
+      } catch (error) {
+        setPaper(null)
+        toast({
+          title: "Error fetching research paper",
+          description: "Could not load the research paper.",
+          variant: "destructive",
+        })
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchPaper()

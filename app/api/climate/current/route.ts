@@ -15,6 +15,10 @@ export async function GET(request: NextRequest) {
     const startDate = new Date()
     startDate.setDate(startDate.getDate() - 1) // Yesterday's data
 
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - 30) // Last 30 days
+
     const climateData = await NASAClimateAPI.fetchClimateData({
       latitude: Number.parseFloat(lat),
       longitude: Number.parseFloat(lon),
@@ -26,6 +30,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(climateData)
   } catch (error) {
     console.error("Climate API error:", error)
-    return NextResponse.json({ error: "Failed to fetch climate data" }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred"
+    return NextResponse.json({ error: "Failed to fetch climate data", details: errorMessage }, { status: 500 })
   }
 }

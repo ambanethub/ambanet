@@ -24,56 +24,17 @@ export function ClimateMap() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate fetching map data
     const fetchMapData = async () => {
       setLoading(true)
-      const mockData: MapData[] = [
-        {
-          region: "Lagos, Nigeria",
-          coordinates: [6.5244, 3.3792],
-          temperature: 28.5,
-          rainfall: 45.2,
-          droughtIndex: 0.3,
-          solarRadiation: 22.8,
-        },
-        {
-          region: "Nairobi, Kenya",
-          coordinates: [-1.2921, 36.8219],
-          temperature: 22.1,
-          rainfall: 78.5,
-          droughtIndex: 0.1,
-          solarRadiation: 25.4,
-        },
-        {
-          region: "Cairo, Egypt",
-          coordinates: [30.0444, 31.2357],
-          temperature: 32.8,
-          rainfall: 2.1,
-          droughtIndex: 0.8,
-          solarRadiation: 28.9,
-        },
-        {
-          region: "Cape Town, South Africa",
-          coordinates: [-33.9249, 18.4241],
-          temperature: 18.7,
-          rainfall: 65.3,
-          droughtIndex: 0.2,
-          solarRadiation: 20.1,
-        },
-        {
-          region: "Accra, Ghana",
-          coordinates: [5.6037, -0.187],
-          temperature: 27.3,
-          rainfall: 52.8,
-          droughtIndex: 0.4,
-          solarRadiation: 23.6,
-        },
-      ]
-
-      setTimeout(() => {
-        setMapData(mockData)
+      try {
+        const response = await fetch("/api/map")
+        const data = await response.json()
+        setMapData(data)
+      } catch (error) {
+        // No toast for map data
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchMapData()

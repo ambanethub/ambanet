@@ -37,22 +37,18 @@ export class NASAClimateAPI {
     url.searchParams.append("end", endDate)
     url.searchParams.append("format", "JSON")
 
-    try {
-      const response = await fetch(url.toString())
+    const response = await fetch(url.toString())
 
-      if (!response.ok) {
-        throw new Error(`NASA API error: ${response.status}`)
-      }
-
-      const data = await response.json()
-
-      // Transform NASA data to our format
-      return this.transformNASAData(data, latitude, longitude)
-    } catch (error) {
-      console.error("Error fetching NASA climate data:", error)
-      // Return mock data as fallback
-      return this.getMockData(latitude, longitude)
+    if (!response.ok) {
+      const errorBody = await response.text()
+      console.error("NASA API Error:", response.status, errorBody)
+      throw new Error(`NASA API error: ${response.status} ${response.statusText}`)
     }
+
+    const data = await response.json()
+
+    // Transform NASA data to our format
+    return this.transformNASAData(data, latitude, longitude)
   }
 
   private static transformNASAData(nasaData: any, lat: number, lon: number): NASAClimateData[] {
@@ -62,11 +58,11 @@ export class NASAClimateAPI {
     const dates = Object.keys(properties.T2M || {})
 
     return dates.map((date) => ({
-      temperature: properties.T2M?.[date] || 0,
-      precipitation: properties.PRECTOTCORR?.[date] || 0,
-      solarRadiation: properties.ALLSKY_SFC_SW_DWN?.[date] || 0,
-      humidity: properties.RH2M?.[date] || 0,
-      windSpeed: properties.WS2M?.[date] || 0,
+      temperature: properties.T2M?.[date] ?? -999,
+      precipitation: properties.PRECTOTCORR?.[date] ?? -999,
+      solarRadiation: properties.ALLSKY_SFC_SW_DWN?.[date] ?? -999,
+      humidity: properties.RH2M?.[date] ?? -999,
+      windSpeed: properties.WS2M?.[date] ?? -999,
       date: this.formatDateFromNASA(date),
       latitude: lat,
       longitude: lon,
@@ -76,30 +72,6 @@ export class NASAClimateAPI {
   private static formatDateFromNASA(nasaDate: string): string {
     // NASA format: YYYYMMDD -> YYYY-MM-DD
     return `${nasaDate.slice(0, 4)}-${nasaDate.slice(4, 6)}-${nasaDate.slice(6, 8)}`
-  }
-
-  private static getMockData(lat: number, lon: number): NASAClimateData[] {
-    // Fallback mock data when API is unavailable
-    const data: NASAClimateData[] = []
-    const today = new Date()
-
-    for (let i = 30; i >= 0; i--) {
-      const date = new Date(today)
-      date.setDate(date.getDate() - i)
-
-      data.push({
-        temperature: 20 + Math.random() * 15,
-        precipitation: Math.random() * 10,
-        solarRadiation: 15 + Math.random() * 10,
-        humidity: 40 + Math.random() * 40,
-        windSpeed: 2 + Math.random() * 8,
-        date: date.toISOString().split("T")[0],
-        latitude: lat,
-        longitude: lon,
-      })
-    }
-
-    return data
   }
 
   // Get current weather for multiple African cities

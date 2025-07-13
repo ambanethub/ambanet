@@ -70,102 +70,32 @@ export function CollaborationCenter() {
   const { toast } = useToast()
 
   useEffect(() => {
-    // Simulate fetching projects
     const fetchProjects = async () => {
       setLoading(true)
-      const mockProjects: Project[] = [
-        {
-          id: "1",
-          title: "Drought Early Warning System for Sahel",
-          description:
-            "Developing an integrated early warning system for drought prediction in the Sahel region using satellite data and machine learning.",
-          objectives: [
-            "Collect and analyze historical drought data",
-            "Develop machine learning prediction models",
-            "Create user-friendly dashboard for stakeholders",
-            "Train local communities on system usage",
-          ],
-          status: "active",
-          leader: "Dr. Amina Hassan",
-          participants: ["Dr. John Okafor", "Prof. Sarah Mwangi", "Dr. Mohamed Ali"],
-          region: ["West Africa", "Sahel"],
-          tags: ["Drought", "Early Warning", "Machine Learning", "Satellite Data"],
-          startDate: "2024-01-01",
-          endDate: "2024-12-31",
-          progress: 45,
-          discussionCount: 23,
-          isPublic: true,
-        },
-        {
-          id: "2",
-          title: "Solar Energy Mapping for Rural Communities",
-          description:
-            "Comprehensive mapping of solar energy potential across rural communities in East Africa to support renewable energy development.",
-          objectives: [
-            "Map solar radiation patterns across target regions",
-            "Assess energy needs of rural communities",
-            "Identify optimal locations for solar installations",
-            "Develop implementation roadmap",
-          ],
-          status: "planning",
-          leader: "Prof. David Kimani",
-          participants: ["Dr. Grace Wanjiku", "Dr. Peter Mwangi"],
-          region: ["East Africa", "Kenya", "Tanzania"],
-          tags: ["Solar Energy", "Rural Development", "Renewable Energy", "Mapping"],
-          startDate: "2024-03-01",
-          endDate: "2024-11-30",
-          progress: 15,
-          discussionCount: 8,
-          isPublic: true,
-        },
-        {
-          id: "3",
-          title: "Climate Adaptation Strategies for Agriculture",
-          description:
-            "Research and development of climate-resilient agricultural practices for smallholder farmers in Sub-Saharan Africa.",
-          objectives: [
-            "Study climate impacts on crop yields",
-            "Develop drought-resistant crop varieties",
-            "Create farmer training programs",
-            "Establish demonstration farms",
-          ],
-          status: "active",
-          leader: "Dr. Sarah Johnson",
-          participants: ["Prof. John Okafor", "Dr. Mary Ochieng", "Dr. Ahmed Hassan"],
-          region: ["Sub-Saharan Africa", "Kenya", "Ghana", "Nigeria"],
-          tags: ["Agriculture", "Climate Adaptation", "Food Security", "Smallholder Farmers"],
-          startDate: "2023-09-01",
-          endDate: "2024-08-31",
-          progress: 78,
-          discussionCount: 45,
-          isPublic: false,
-        },
-      ]
+      try {
+        const [projectsRes, requestsRes] = await Promise.all([
+          fetch("/api/collab/projects"),
+          fetch("/api/collab/requests"),
+        ])
+        const projectsData = await projectsRes.json()
+        const requestsData = await requestsRes.json()
 
-      const mockRequests: ProjectRequest[] = [
-        {
-          id: "1",
-          projectId: "1",
-          userId: "user1",
-          userName: "Dr. Lisa Chen",
-          userEmail: "lisa.chen@university.edu",
-          message:
-            "I have extensive experience in satellite data analysis and would like to contribute to this important project.",
-          status: "pending",
-          requestDate: "2024-01-15",
-        },
-      ]
-
-      setTimeout(() => {
-        setProjects(mockProjects)
+        setProjects(projectsData)
         setFilteredProjects(
-          mockProjects.filter(
-            (p) => p.isPublic || (user && (p.leader === user.name || p.participants.includes(user.name))),
+          projectsData.filter(
+            (p: Project) => p.isPublic || (user && (p.leader === user.name || p.participants.includes(user.name))),
           ),
         )
-        setRequests(mockRequests)
+        setRequests(requestsData)
+      } catch (error) {
+        toast({
+          title: "Error fetching collaboration data",
+          description: "Could not load projects and requests.",
+          variant: "destructive",
+        })
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchProjects()

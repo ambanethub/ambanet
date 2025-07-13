@@ -48,79 +48,22 @@ export function AlertsCenter() {
   const { toast } = useToast()
 
   useEffect(() => {
-    // Simulate fetching alerts
     const fetchAlerts = async () => {
       setLoading(true)
-
-      const mockAlerts: ClimateAlert[] = [
-        {
-          id: "1",
-          type: "critical",
-          title: "Extreme Drought Warning",
-          description:
-            "Severe drought conditions detected in the Horn of Africa. Water reserves critically low with immediate action required.",
-          region: "Horn of Africa",
-          severity: "critical",
-          timestamp: "2024-01-16T10:30:00Z",
-          isActive: true,
-          source: "NASA POWER API",
-          coordinates: [40.0, 9.0],
-        },
-        {
-          id: "2",
-          type: "warning",
-          title: "High Temperature Alert",
-          description: "Temperatures exceeding 40°C expected across the Sahel region for the next 5 days.",
-          region: "Sahel",
-          severity: "high",
-          timestamp: "2024-01-16T08:15:00Z",
-          isActive: true,
-          source: "Weather Monitoring Network",
-          coordinates: [0.0, 15.0],
-        },
-        {
-          id: "3",
-          type: "info",
-          title: "Rainfall Forecast Update",
-          description: "Moderate rainfall expected in Central Africa, potentially alleviating drought conditions.",
-          region: "Central Africa",
-          severity: "medium",
-          timestamp: "2024-01-16T06:45:00Z",
-          isActive: true,
-          source: "Regional Climate Center",
-          coordinates: [15.0, 0.0],
-        },
-        {
-          id: "4",
-          type: "warning",
-          title: "Flood Risk Alert",
-          description: "Heavy rainfall in the Nile Basin may cause flooding in downstream areas.",
-          region: "Nile Basin",
-          severity: "high",
-          timestamp: "2024-01-15T22:20:00Z",
-          isActive: true,
-          source: "Hydrological Service",
-          coordinates: [32.0, 15.0],
-        },
-        {
-          id: "5",
-          type: "success",
-          title: "Drought Conditions Improving",
-          description: "Recent rainfall has improved drought conditions in parts of Southern Africa.",
-          region: "Southern Africa",
-          severity: "low",
-          timestamp: "2024-01-15T14:10:00Z",
-          isActive: false,
-          source: "Agricultural Monitoring System",
-          coordinates: [25.0, -25.0],
-        },
-      ]
-
-      setTimeout(() => {
-        setAlerts(mockAlerts)
-        setFilteredAlerts(mockAlerts)
+      try {
+        const response = await fetch("/api/alerts")
+        const data = await response.json()
+        setAlerts(data)
+        setFilteredAlerts(data)
+      } catch (error) {
+        toast({
+          title: "Error fetching alerts",
+          description: "Could not load climate alerts.",
+          variant: "destructive",
+        })
+      } finally {
         setLoading(false)
-      }, 1000)
+      }
     }
 
     fetchAlerts()

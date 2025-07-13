@@ -64,17 +64,6 @@ export function Dashboard() {
         setClimateData(transformedData)
       } catch (error) {
         console.error("Error fetching climate data:", error)
-        // Fallback to mock data
-        setClimateData([
-          {
-            temperature: 28.5,
-            rainfall: 45.2,
-            solarRadiation: 22.8,
-            droughtIndex: 0.3,
-            region: "West Africa",
-            timestamp: new Date().toISOString(),
-          },
-        ])
       } finally {
         setLoading(false)
       }
